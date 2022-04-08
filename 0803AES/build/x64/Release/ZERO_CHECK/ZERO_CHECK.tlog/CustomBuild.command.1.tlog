@@ -1,0 +1,10 @@
+^C:\USERS\KHOOL\DESKTOP\FYP\0803AES\BUILD\CMAKEFILES\8F2146CE2BA3662CB2D9A84AA32F7028\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/khool/Desktop/FYP/0803AES -BC:/Users/khool/Desktop/FYP/0803AES/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/khool/Desktop/FYP/0803AES/build/0803AES.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
