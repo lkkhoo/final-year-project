@@ -4,4 +4,4 @@
 
 2703LFSR contains the code for an LFSR based Image Encryption. It requires CMAKE to run. The initialisation key has to be set manually.
 
-metrics contains all four metrics used to test the encrypted images, histogram, peak signal-to-noise, coefficient correlation and information entropy.
+metrics contains all four metrics used to test the encrypted images, histogram, peak signal-to-noise, coefficient correlation and information entropy. It also contains all th test images used, encrypted images and graphs produced.
