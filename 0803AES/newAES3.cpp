@@ -80,19 +80,23 @@ unsigned char rcon[256] = {
   0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
 };
 
+
 void keyExpansionCore(unsigned char* in, unsigned char i){
   unsigned int * q = (unsigned int *) in;
   //rotate left
   *q = (*q >> 8 | ((*q & 0xff) << 24));
-
+  
+  //s-box substitution
   in[0] = s_box[in[0]]; 
   in[1] = s_box[in[1]];
   in[2] = s_box[in[2]]; 
   in[3] = s_box[in[3]];
 
+  //rcon xor
   in[0] ^= rcon[i];
 }
 
+//expands 128 bit key until there is 176 bytes of key
 void keyExpansion(unsigned char* inputKey, unsigned char* expandedKey){
   for(int i=0; i<16; i++){
     expandedKey[i] = inputKey[i];
@@ -118,6 +122,7 @@ void keyExpansion(unsigned char* inputKey, unsigned char* expandedKey){
   }
 }
 
+//substitues state bytes with s-box
 void subBytes(unsigned char* state){
   //substitues state with s_box
   for(int i=0; i<16; i++){
@@ -125,6 +130,7 @@ void subBytes(unsigned char* state){
   }
 }
 
+//shift rows by certain offsets
 void shiftRows(unsigned char* state){
   unsigned char tmp[16];
 
@@ -153,6 +159,7 @@ void shiftRows(unsigned char* state){
   }
 }
 
+//performs a matrix multiplication using the mul2 and mul3 look up tables
 void mixColumns(unsigned char* state){
   unsigned char tmp[16];
 
@@ -181,12 +188,14 @@ void mixColumns(unsigned char* state){
   }
 }
 
+//xors state bytes with current round key
 void addRoundKey(unsigned char* state, unsigned char* roundKey){
   for(int i=0; i<16; i++){
     state[i] ^= roundKey[i];
   }
 };
 
+//encrypts the nonce and counter to produce the keystream
 void encrypt(unsigned char* block, unsigned char* key){
     int rounds = 2;
     unsigned char expandedKey[176];
@@ -215,34 +224,23 @@ void encrypt(unsigned char* block, unsigned char* key){
     }
 }
 
-void printHex(unsigned char x){
-  if (x/16 < 10){
-    cout<<(char)((x/16) + '0');
-  }
-  if (x/16 >= 10){
-    cout<<(char)((x/16 - 10) + 'A');
-  }
-  if (x%16 < 10){
-    cout<<(char)((x%16) + '0');
-  }
-  if (x%16 >= 10){
-    cout<<(char)((x%16 - 10) + 'A');
-  }
-};
-
+//connects the bytes and integer of the counter
 union{
     unsigned char bytes[8];
     unsigned long integer;
 } counter;
 
+
 int main(){
   cv::Mat imageMat;
+  //reads image to be encrypted
   imageMat = cv::imread("C:/Users/khool/Desktop/FYP/0803AES/test images/baboon.tif", 0);
 
   std::vector<unsigned char> pixel;
 
   int arrayLength = imageMat.cols * imageMat.rows;
   
+  //store pixel values of image
   for(int c = 0; c < imageMat.cols; ++c){
     for(int r = 0; r < imageMat.rows; ++r) {
       pixel.push_back((unsigned char)imageMat.at<uchar>(c,r));
